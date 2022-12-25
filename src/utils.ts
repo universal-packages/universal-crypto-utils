@@ -99,11 +99,16 @@ export function generateToken(options?: GenerateTokenOptions): string {
   }
 
   const randomBytes = crypto.randomBytes(finalOptions.byteSize)
-  let hash = finalOptions.concern || finalOptions.seed ? crypto.createHash('sha256').update(randomBytes) : randomBytes
+  let additional = Buffer.from('')
 
-  if (finalOptions.concern) (hash as crypto.Hash).update(finalOptions.concern)
-  if (finalOptions.seed) (hash as crypto.Hash).update(finalOptions.seed)
-  if (finalOptions.concern || finalOptions.seed) hash = (hash as crypto.Hash).digest()
+  if (finalOptions.concern || finalOptions.seed) {
+    const hash = crypto.createHash('sha256')
 
-  return hash.toString(finalOptions.format)
+    if (finalOptions.seed) hash.update(finalOptions.seed)
+    if (finalOptions.concern) hash.update(finalOptions.concern)
+
+    additional = hash.digest()
+  }
+
+  return Buffer.concat([randomBytes, additional]).toString(finalOptions.format)
 }
