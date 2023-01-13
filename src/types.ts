@@ -29,3 +29,8 @@ export interface GenerateTokenOptions {
   format?: BufferEncoding
   seed?: string
 }
+
+export interface DigestSubjectOptions {
+  format?: BufferEncoding
+}
+

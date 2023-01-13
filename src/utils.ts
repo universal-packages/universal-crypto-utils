@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { GenerateTokenOptions, SubjectDecryptionOptions, SubjectEncryptionOptions, SubjectHashOptions } from './types'
+import { DigestSubjectOptions, GenerateTokenOptions, SubjectDecryptionOptions, SubjectEncryptionOptions, SubjectHashOptions } from './types'
 
 export function checkSubjectHash(subject: string, hashedSubject: string, options?: SubjectHashOptions): boolean {
   const finalOptions: SubjectHashOptions = {
@@ -111,4 +111,18 @@ export function generateToken(options?: GenerateTokenOptions): string {
   }
 
   return Buffer.concat([randomBytes, additional]).toString(finalOptions.format)
+}
+
+export function digestSubject(subject: string, secret: string, options?: DigestSubjectOptions): string {
+  const finalOptions: DigestSubjectOptions = {
+    format: 'base64',
+    ...options
+  }
+
+  const baseString = `${secret}.${subject}`
+  const hash = crypto.createHash('sha512')
+
+  hash.update(baseString)
+
+  return hash.digest().toString(finalOptions.format)
 }

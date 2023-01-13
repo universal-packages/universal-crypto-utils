@@ -12,7 +12,7 @@ Extended functionality for crypto, basic methods for hashing, encrypting and gen
 npm install @universal-packages/crypto-utils
 ```
 
-## hashSubject
+## hashSubject `(subject: string, [options])`
 
 Generates a random digested and salted string from a an original subject that can be tested against the final hash later.
 
@@ -35,7 +35,7 @@ console.log(hash)
 - **`scryptOptions`** `ScryptOptions`
   See [Node scryptSync](https://nodejs.org/api/crypto.html#cryptoscryptsyncpassword-salt-keylen-options) in case you want to specify these.
 
-## checkSubjectHash
+## checkSubjectHash `(subject: string, hashed: string, [options])`
 
 Checks against a previously generated hash and the original subject and check if they match. It imperative to use the same options as when previously hashing the subject.
 
@@ -60,7 +60,7 @@ console.log(checkSubjectHash('other thing', hash))
 - **`scryptOptions`** `ScryptOptions`
   See [Node scryptSync](https://nodejs.org/api/crypto.html#cryptoscryptsyncpassword-salt-keylen-options) in case you want to specify these.
 
-## encryptSubject
+## encryptSubject `(subject: Object, secret: string, [options])`
 
 Encrypts a subject object into a string that can be decrypted later into the original subject object.
 
@@ -89,7 +89,7 @@ console.log(encrypted)
 - **`format`** `BufferEncoding` `Default: base64`
   Format in which final string should be generated.
 
-## decryptSubject
+## decryptSubject `(encrypted: string, secret: string, [options])`
 
 Decrypts a previously generated subject. It imperative to use the same secret and options as when previously encrypting the subject.
 
@@ -116,7 +116,7 @@ console.log(decryptSubject(encrypted, 'other secret'))
 - **`concern`** `String`
   Used to discriminate against encrypted objects used under different context.
 
-## generateToken
+## generateToken `([options])`
 
 Generates a random token.
 
@@ -140,6 +140,28 @@ console.log(token)
   Format in which final string should be generated.
 - **`seed`** `String`
   Used to add randomness based on additional context like machine id, process id and so on.
+
+## digestSubject `(subject: string, secret: string, [options])`
+
+Hashes a subject in the same way always with the same secret.
+
+```js
+import { digestSubject } from '@universal-packages/crypto-utils'
+
+const digested1 = digestSubject('subject', 'secret')
+const digested2 = digestSubject('subject', 'secret')
+
+console.log(digested1)
+console.log(digested2)
+
+// > Yra32DLVGLbMmqCoBnM0P6ra32DG6era32DRf6ra32D2KVLVGLbMmqCoBnM0zIrGZnsqeiE=
+// > Yra32DLVGLbMmqCoBnM0P6ra32DG6era32DRf6ra32D2KVLVGLbMmqCoBnM0zIrGZnsqeiE=
+```
+
+### Options
+
+- **`format`** `BufferEncoding` `Default: base64`
+  Format in which final string should be generated.
 
 ## Typescript
 
