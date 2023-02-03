@@ -12,7 +12,8 @@ Extended functionality for crypto, basic methods for hashing, encrypting and gen
 npm install @universal-packages/crypto-utils
 ```
 
-## hashSubject `(subject: string, [options])`
+## Global methods
+#### **`hashSubject(subject: string, [options])`**
 
 Generates a random digested and salted string from a an original subject that can be tested against the final hash later.
 
@@ -26,7 +27,7 @@ console.log(hash)
 // > Yra32DP6G6eRfcLVGLbMmqCoBnM062KVzIrGZnsqeiE=
 ```
 
-### Options
+#### Options
 
 - **`byteSize`** `Number` `Default: 64`
   Number of bytes to use to generate randomness.
@@ -35,7 +36,7 @@ console.log(hash)
 - **`scryptOptions`** `ScryptOptions`
   See [Node scryptSync](https://nodejs.org/api/crypto.html#cryptoscryptsyncpassword-salt-keylen-options) in case you want to specify these.
 
-## checkSubjectHash `(subject: string, hashed: string, [options])`
+#### **`checkSubjectHash(subject: string, hashed: string, [options])`**
 
 Checks against a previously generated hash and the original subject and check if they match. It imperative to use the same options as when previously hashing the subject.
 
@@ -51,7 +52,7 @@ console.log(checkSubjectHash('other thing', hash))
 // > false
 ```
 
-### Options
+#### Options
 
 - **`byteSize`** `Number` `Default: 64`
   Number of bytes to use to generate randomness.
@@ -60,7 +61,7 @@ console.log(checkSubjectHash('other thing', hash))
 - **`scryptOptions`** `ScryptOptions`
   See [Node scryptSync](https://nodejs.org/api/crypto.html#cryptoscryptsyncpassword-salt-keylen-options) in case you want to specify these.
 
-## encryptSubject `(subject: Object, secret: string, [options])`
+#### **`encryptSubject(subject: Object, secret: string, [options])`**
 
 Encrypts a subject object into a string that can be decrypted later into the original subject object.
 
@@ -74,7 +75,7 @@ console.log(encrypted)
 // > Yra32DLVGLbMmqCoBnM0P6ra32DG6era32DRfcLVGLbMra32DmqCoBnM06ra32D2KVLVGLbMmqCoBnM0zIrGZnsqeiE=
 ```
 
-### Options
+#### Options
 
 - **`algorithm`** `CipherGCMTypes` `Default: aes-256-gcm`
   Algorithm used to encrypt the subject.
@@ -89,7 +90,7 @@ console.log(encrypted)
 - **`format`** `BufferEncoding` `Default: base64`
   Format in which final string should be generated.
 
-## decryptSubject `(encrypted: string, secret: string, [options])`
+#### **`decryptSubject(encrypted: string, secret: string, [options])`**
 
 Decrypts a previously generated subject. It imperative to use the same secret and options as when previously encrypting the subject.
 
@@ -105,7 +106,7 @@ console.log(decryptSubject(encrypted, 'other secret'))
 // > undefined
 ```
 
-### Options
+#### Options
 
 - **`algorithm`** `CipherGCMTypes` `Default: aes-256-gcm`
   Algorithm used to encrypt the subject.
@@ -116,7 +117,7 @@ console.log(decryptSubject(encrypted, 'other secret'))
 - **`concern`** `String`
   Used to discriminate against encrypted objects used under different context.
 
-## generateToken `([options])`
+#### **`generateToken([options])`**
 
 Generates a random token.
 
@@ -130,7 +131,7 @@ console.log(token)
 // > Yra32DLVGLbMmqCoBnM0P6ra32DG6era32DRf6ra32D2KVLVGLbMmqCoBnM0zIrGZnsqeiE=
 ```
 
-### Options
+#### Options
 
 - **`byteSize`** `Number` `Default: 64`
   Number of bytes to use to generate randomness.
@@ -141,7 +142,7 @@ console.log(token)
 - **`seed`** `String`
   Used to add randomness based on additional context like machine id, process id and so on.
 
-## digestSubject `(subject: string, secret: string, [options])`
+#### **`digestSubject(subject: string, secret: string, [options])`**
 
 Hashes a subject in the same way always with the same secret.
 
@@ -158,7 +159,7 @@ console.log(digested2)
 // > Yra32DLVGLbMmqCoBnM0P6ra32DG6era32DRf6ra32D2KVLVGLbMmqCoBnM0zIrGZnsqeiE=
 ```
 
-### Options
+#### Options
 
 - **`format`** `BufferEncoding` `Default: base64`
   Format in which final string should be generated.
