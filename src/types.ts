@@ -33,4 +33,3 @@ export interface GenerateTokenOptions {
 export interface DigestSubjectOptions {
   format?: BufferEncoding
 }
-
