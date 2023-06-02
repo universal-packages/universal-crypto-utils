@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+
 import { DigestSubjectOptions, GenerateTokenOptions, SubjectDecryptionOptions, SubjectEncryptionOptions, SubjectHashOptions } from './types'
 
 export function checkSubjectHash(subject: string, hashedSubject: string, options?: SubjectHashOptions): boolean {

@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+
 import { generateToken } from '../../src'
 
 beforeEach((): void => {
