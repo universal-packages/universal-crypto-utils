@@ -13,9 +13,9 @@ export function checkSubjectHash(subject: string, hashedSubject: string, options
     ...options
   }
 
-  const encryptedSubjectBuffer = Buffer.from(hashedSubject, finalOptions.format)
-  const salt = encryptedSubjectBuffer.slice(0, finalOptions.byteSize)
-  const hash = encryptedSubjectBuffer.slice(-finalOptions.byteSize)
+  const encryptedSubjectBuffer = new Uint8Array(Buffer.from(hashedSubject, finalOptions.format))
+  const salt = encryptedSubjectBuffer.subarray(0, finalOptions.byteSize)
+  const hash = encryptedSubjectBuffer.subarray(-finalOptions.byteSize)
   const hashForSubject = crypto.scryptSync(subject, salt, finalOptions.byteSize, finalOptions.scryptOptions)
 
   return hashForSubject.equals(hash)
@@ -31,8 +31,8 @@ export function hashSubject(subject: string, options?: SubjectHashOptions): stri
     },
     ...options
   }
-  const salt = crypto.randomBytes(finalOptions.byteSize)
-  const hash = crypto.scryptSync(subject, salt, finalOptions.byteSize, finalOptions.scryptOptions)
+  const salt = new Uint8Array(crypto.randomBytes(finalOptions.byteSize))
+  const hash = new Uint8Array(crypto.scryptSync(subject, salt, finalOptions.byteSize, finalOptions.scryptOptions))
 
   return Buffer.concat([salt, hash]).toString(finalOptions.format)
 }
@@ -50,13 +50,13 @@ export function encryptSubject(subject: Record<string, any>, secret: string, opt
   const serializedPayload = JSON.stringify(payload)
 
   const keyLength = finalOptions.algorithm === 'aes-128-gcm' ? 16 : finalOptions.algorithm === 'aes-192-gcm' ? 24 : 32
-  const iv = crypto.randomBytes(finalOptions.byteSize)
+  const iv = new Uint8Array(crypto.randomBytes(finalOptions.byteSize))
   const key = crypto.createHash('sha256').update(String(secret)).digest('base64').substring(0, keyLength)
   const cipher = crypto.createCipheriv(finalOptions.algorithm, key, iv, { authTagLength: finalOptions.authTagLength } as any)
 
-  const encryptedPayload = Buffer.concat([cipher.update(serializedPayload), cipher.final()])
+  const encryptedPayload = new Uint8Array(Buffer.concat([new Uint8Array(cipher.update(serializedPayload)), new Uint8Array(cipher.final())]))
 
-  return Buffer.concat([iv, encryptedPayload, cipher.getAuthTag()]).toString(finalOptions.format)
+  return Buffer.concat([iv, encryptedPayload, new Uint8Array(cipher.getAuthTag())]).toString(finalOptions.format)
 }
 
 export function decryptSubject(encryptedSubject: string, secret: string, options?: SubjectDecryptionOptions): any {
@@ -70,9 +70,9 @@ export function decryptSubject(encryptedSubject: string, secret: string, options
 
   try {
     const encryptedSubjectBuffer = Buffer.from(encryptedSubject, finalOptions.format)
-    const authTag = encryptedSubjectBuffer.slice(-finalOptions.authTagLength)
-    const iv = encryptedSubjectBuffer.slice(0, finalOptions.byteSize)
-    const encryptedPayload = encryptedSubjectBuffer.slice(finalOptions.byteSize, -finalOptions.authTagLength)
+    const authTag = new Uint8Array(encryptedSubjectBuffer.subarray(-finalOptions.authTagLength))
+    const iv = new Uint8Array(encryptedSubjectBuffer.subarray(0, finalOptions.byteSize))
+    const encryptedPayload = new Uint8Array(encryptedSubjectBuffer.subarray(finalOptions.byteSize, -finalOptions.authTagLength))
 
     const keyLength = finalOptions.algorithm === 'aes-128-gcm' ? 16 : finalOptions.algorithm === 'aes-192-gcm' ? 24 : 32
     const key = crypto.createHash('sha256').update(String(secret)).digest('base64').substring(0, keyLength)
@@ -81,7 +81,7 @@ export function decryptSubject(encryptedSubject: string, secret: string, options
     decipher.setAuthTag(authTag)
 
     try {
-      const serializedPayload = Buffer.concat([decipher.update(encryptedPayload), decipher.final()]).toString()
+      const serializedPayload = Buffer.concat([new Uint8Array(decipher.update(encryptedPayload)), new Uint8Array(decipher.final())]).toString()
       const payload = JSON.parse(serializedPayload)
 
       if (payload.expiresAt && payload.expiresAt < Date.now()) return
@@ -99,8 +99,8 @@ export function generateToken(options?: GenerateTokenOptions): string {
     ...options
   }
 
-  const randomBytes = crypto.randomBytes(finalOptions.byteSize)
-  let additional = Buffer.from('')
+  const randomBytes = new Uint8Array(crypto.randomBytes(finalOptions.byteSize))
+  let additional = new Uint8Array(Buffer.from(''))
 
   if (finalOptions.concern || finalOptions.seed) {
     const hash = crypto.createHash('sha256')
@@ -108,7 +108,7 @@ export function generateToken(options?: GenerateTokenOptions): string {
     if (finalOptions.seed) hash.update(finalOptions.seed)
     if (finalOptions.concern) hash.update(finalOptions.concern)
 
-    additional = hash.digest()
+    additional = new Uint8Array(hash.digest())
   }
 
   return Buffer.concat([randomBytes, additional]).toString(finalOptions.format)
